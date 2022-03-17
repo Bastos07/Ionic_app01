@@ -1,5 +1,13 @@
 export const environment = {
   production: true,
+
+  /**
+   * Configurações obtidas do projeto no Firebase.
+   *
+   * ATENÇÃO!
+   * Não use essa configurações, pois elas apontam para o Firebase do instrutor.
+   * Obtenha suas prórpias configurações do projeto no seu Firebase.
+   */
   firebase: {
     apiKey: 'AIzaSyAvbPZr7ewCALNTqgNunQjgw_G9S2oIiao',
     authDomain: 'my-profile-cdb09.firebaseapp.com',
