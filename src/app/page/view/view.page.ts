@@ -66,9 +66,10 @@ export class ViewPage implements OnInit {
 
       // Conecta ao banco de dados e obtém todos os comentários deste artigo
       onSnapshot(query(
-        collection(this.db, 'comment'), // Conecta-se à coleção 'comment'
-        where('status', '==', 'on'), // Somente se o 'status' for 'on'
-        orderBy('date', 'desc') // Obtém os documentos ordenados pela data, da mais nova para a mais antiga
+        collection(this.db, 'comment'),
+        where('article', '==', this.id),
+        where('status', '==', 'on'),
+        orderBy('date', 'desc')
       ), (myComments) => {
 
         // Limpa a lista de manuais para carregar novamente.
@@ -84,8 +85,6 @@ export class ViewPage implements OnInit {
           this.comments.push(myComment);
 
         });
-
-        console.log(this.comments);
 
       });
 
@@ -103,8 +102,11 @@ export class ViewPage implements OnInit {
 
         // Armazena os dados do usuário em 'this.user'
         this.userData = user;
+
+        console.log(this.userData, this.auth.user);
       }
     });
+
   }
 
   // Salva comentários no banco de dados
