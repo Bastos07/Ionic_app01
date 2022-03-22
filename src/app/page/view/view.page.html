@@ -20,7 +20,17 @@
   <small class="date-time">{{ art.date | date :'d/m/Y'}} às {{ art.date | date :'H:mm'}}.</small>
   <div [innerHTML]="art.body"></div>
 
-  &nbsp;
-  <ion-button size="block" routerLink="/usuarios">&larr; Voltar</ion-button>
+  <ion-button class="ion-margin-top" size="block" routerLink="/usuarios">&larr; Voltar</ion-button>
+
+  <ion-item-divider class="ion-margin-bottom"></ion-item-divider>
+
+  <div *ngIf="auth.user">
+    <ion-label>Deixe seu comentário:</ion-label>
+    <ion-textarea [(ngModel)]="comment" auto-grow></ion-textarea>
+    <ion-button (click)="sendComment()">Enviar</ion-button>
+    <ion-item-divider class="ion-no-padding"></ion-item-divider>
+  </div>
+
+  <h3>Comentários</h3>
 
 </ion-content>
