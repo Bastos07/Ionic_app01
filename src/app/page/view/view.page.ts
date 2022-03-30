@@ -2,11 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 // Importa dependências
 import { ActivatedRoute, Router } from '@angular/router';
-import { initializeApp } from 'firebase/app';
-import { doc, getDoc, getFirestore, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
-import { environment } from 'src/environments/environment';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { collection, addDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, Firestore, getDoc, onSnapshot, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -18,12 +15,6 @@ export class ViewPage implements OnInit {
 
   // Armazena o Id do artigo vindo da rota
   public id: string;
-
-  // Conexão com o Firebase
-  app = initializeApp(environment.firebase);
-
-  // Conexão com o banco de dadosKw
-  db = getFirestore();
 
   // Armazena o artigo completo
   art: any;
@@ -38,9 +29,10 @@ export class ViewPage implements OnInit {
   constructor(
 
     // Injeta dependências
+    private afs: Firestore,
     private activatedRoute: ActivatedRoute,
     private route: Router,
-    public auth: AngularFireAuth,
+    private auth: Auth,
     public alertController: AlertController
   ) { }
 
@@ -51,7 +43,7 @@ export class ViewPage implements OnInit {
     this.id = this.activatedRoute.snapshot.paramMap.get('id');
 
     // Obtém o artigo inteiro à partir do ID deste
-    const myArt = await getDoc(doc(this.db, 'manual', this.id));
+    const myArt = await getDoc(doc(this.afs, 'manual', this.id));
 
     // Se o artigo foi encontrado...
     if (myArt.exists()) {
@@ -60,13 +52,13 @@ export class ViewPage implements OnInit {
       this.art = myArt.data();
 
       // Incrementa 'views' do artigo
-      updateDoc(doc(this.db, 'manual', this.id), {
+      updateDoc(doc(this.afs, 'manual', this.id), {
         views: (parseInt(this.art.views, 10) + 1).toString()
       });
 
       // Conecta ao banco de dados e obtém todos os comentários deste artigo
       onSnapshot(query(
-        collection(this.db, 'comment'),
+        collection(this.afs, 'comment'),
         where('article', '==', this.id),
         where('status', '==', 'on'),
         orderBy('date', 'desc')
@@ -96,14 +88,10 @@ export class ViewPage implements OnInit {
       this.route.navigate(['/usuarios']);
     }
 
-    // Verifica se tem usuario logado
-    this.auth.authState.subscribe(user => {
+    // Verifica se tem usuario logado e obtém dados deste
+    onAuthStateChanged(this.auth, user => {
       if (user) {
-
-        // Armazena os dados do usuário em 'this.user'
         this.userData = user;
-
-        console.log(this.userData, this.auth.user);
       }
     });
 
@@ -146,7 +134,7 @@ export class ViewPage implements OnInit {
 
       // Tenta armazenar o comentário em um novo documento da coleção 'comment'
       try {
-        const docRef = await addDoc(collection(this.db, 'comment'), commentData);
+        const docRef = await addDoc(collection(this.afs, 'comment'), commentData);
 
         // Se deu certo, exibe alerta para o usuário
         this.presentAlert();

@@ -24,10 +24,10 @@ export class FaqPage implements OnInit {
     private alertController: AlertController
   ) { }
 
-  async ngOnInit() {
+  ngOnInit() {
 
     // Conectar ao banco de dados e obtém todos os documentos da coleção 'faq'
-    await onSnapshot(query(collection(this.afs, 'faq')), (faqs) => {
+    onSnapshot(query(collection(this.afs, 'faq')), (faqs) => {
 
       // Limpa a lista de FAQ para carregar uma nova listagem em caso de atualização.
       this.faq = [];

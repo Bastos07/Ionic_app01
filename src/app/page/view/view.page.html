@@ -27,7 +27,7 @@
 
   <ion-item-divider class="ion-margin-bottom"></ion-item-divider>
 
-  <div *ngIf="auth.user | async as user; else showLogin">
+  <div *ngIf="userData; else showLogin">
     <ion-label>Deixe seu comentário:</ion-label>
     <ion-textarea [(ngModel)]="comment" auto-grow></ion-textarea>
     <ion-button (click)="sendComment()">Enviar</ion-button>
