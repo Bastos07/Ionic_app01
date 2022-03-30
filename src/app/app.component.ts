@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Importa dependências
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-root',
@@ -10,27 +10,19 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 })
 export class AppComponent implements OnInit {
 
-  // Variável que armazena dados do usuário logado
-  user: any;
+  user: any; // Usuário logado
 
   constructor(
-
-    // Injeta dependências
-    public auth: AngularFireAuth,
+    private auth: Auth // Injeção de dependência
   ) { }
 
-  // executada sempre que esta página é 'aberta'
+  // Executada sempre que esta página é 'aberta'
   ngOnInit() {
 
-    // Verifica se tem usuario logado
-    this.auth.authState.subscribe(user => {
-      if (user) {
-
-        // Armazena os dados do usuário em 'this.user'
-        this.user = user;
-      }
+    onAuthStateChanged(this.auth, user => { // Se usuário está logado...
+      if (user) { this.user = user; }       // Atualiza 'this.user'
+      else { this.user = false; }           // Se não, 'this.user' será 'false'
     });
 
   }
-
 }

@@ -41,7 +41,7 @@
             <ion-item-divider></ion-item-divider>
 
             <!-- Se tem usuário logado, exibe o bloco dentro da div abaixo. -->
-            <div *ngIf="auth.user | async as user; else showLogin">
+            <div *ngIf="user; else showLogin">
 
               <ion-item routerDirection="root" routerLink="/usuario/perfil" lines="none" detail="false" routerLinkActive="selected">
                 <ion-thumbnail slot="start">

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 // Importa dependências
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,7 +14,7 @@ export class LogoutPage implements OnInit {
   constructor(
 
     // Injeta dependências
-    public auth: AngularFireAuth,
+    public auth: Auth,
     private route: Router
   ) { }
 

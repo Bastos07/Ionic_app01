@@ -10,7 +10,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-no-padding" *ngIf="auth.user | async as user">
+<ion-content class="ion-no-padding" *ngIf="user">
 
   <ion-card>
     <div class="ion-text-center">
@@ -27,11 +27,11 @@
           <strong>Data do cadastro:</strong>
         </li>
         <ul>
-          <li>{{ userData.metadata.createdAt | date: 'dd/MM/yyyy' }} às {{ userData.metadata.createdAt | date: 'HH:mm' }}</li>
+          <li>{{ user.metadata.createdAt | date: 'dd/MM/yyyy' }} às {{ user.metadata.createdAt | date: 'HH:mm' }}</li>
         </ul>
         <li><strong>Último acesso:</strong></li>
         <ul>
-          <li>{{ userData.metadata.lastLoginAt | date: 'dd/MM/yyyy' }} às {{ userData.metadata.lastLoginAt | date: 'HH:mm' }}</li>
+          <li>{{ user.metadata.lastLoginAt | date: 'dd/MM/yyyy' }} às {{ user.metadata.lastLoginAt | date: 'HH:mm' }}</li>
         </ul>
       </ul>
 

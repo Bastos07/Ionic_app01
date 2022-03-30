@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 // Importa dependências
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import firebase from 'firebase/compat/app';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     // Injeta dependências
-    public auth: AngularFireAuth,
+    private auth: Auth,
     public alertController: AlertController,
     private route: Router
   ) { }
@@ -26,7 +26,7 @@ export class LoginPage implements OnInit {
   login() {
 
     // Faz a autenticação do usuário pelo provedor
-    this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    signInWithPopup(this.auth, new GoogleAuthProvider())
 
       // Se der certo...
       .then(
