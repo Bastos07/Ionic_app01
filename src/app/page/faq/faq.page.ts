@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 
 // Importa todas as dependências necessárias
-import { collection, collectionChanges, collectionData, CollectionReference, Firestore, query } from '@angular/fire/firestore';
+import { collection, Firestore, query, onSnapshot } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-faq',
@@ -15,21 +15,41 @@ export class FaqPage implements OnInit {
   faq: any;
 
   // Vai armazenar todos os FAQ obtidos para a view
-  faqs: any;
+  faqs: Array<any> = [];
 
   constructor(
+
+    // Injeta dependências
     private afs: Firestore,
     private alertController: AlertController
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
 
-    collectionData(collection(this.afs, 'faq'), { idField: 'id' }).subscribe((faqs) => {
-      this.faqs = faqs;
+    // Conectar ao banco de dados e obtém todos os documentos da coleção 'faq'
+    await onSnapshot(query(collection(this.afs, 'faq')), (faqs) => {
+
+      // Limpa a lista de FAQ para carregar uma nova listagem em caso de atualização.
+      this.faq = [];
+
+      // Loop que itera cada faq obtida
+      faqs.docs.forEach((doc) => {
+
+        // Armazena dados da faq na variável 'faq'
+        this.faq = doc.data();
+
+        // Também armazena o ID do documento em 'faq'
+        this.faq.id = doc.id;
+
+        // Adiciona conteúdo de 'faq' em 'faqs' para ser usado na view
+        this.faqs.push(this.faq);
+
+      });
     });
   }
 
-  async show(alertTitle, alertText) {
+  // Caixa de alerta que exibe a FAQ completa ao clicar nela.
+  async showFaq(alertTitle, alertText) {
     const alert = await this.alertController.create({
       header: alertTitle,
       message: alertText,
