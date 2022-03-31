@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 // Importa dependências
 import { ActivatedRoute, Router } from '@angular/router';
 import { addDoc, collection, doc, Firestore, getDoc, onSnapshot, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
-import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { AlertController } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-view',
@@ -19,12 +19,12 @@ export class ViewPage implements OnInit {
   // Armazena o artigo completo
   art: any;
 
-  // Variável que armazena dados do usuário logado
-  userData: any;
-
   // Armazena comentários
-  comment = '';
+  comment: any;
+  commentData: any;
   comments: Array<any> = [];
+  commentForm: FormGroup;
+  commentSubmited = false;
 
   constructor(
 
@@ -32,12 +32,15 @@ export class ViewPage implements OnInit {
     private afs: Firestore,
     private activatedRoute: ActivatedRoute,
     private route: Router,
-    private auth: Auth,
-    public alertController: AlertController
+    public alertController: AlertController,
+    private fb: FormBuilder
   ) { }
 
   // 'ngOnInit()' deve ser 'async' por causa do 'await' usado logo abaixo!
   async ngOnInit() {
+
+    // Cria formulário de comentários
+    this.createForm();
 
     // Obtém o ID do artigo a ser exibido, da rota (URL)
     this.id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -64,7 +67,7 @@ export class ViewPage implements OnInit {
         orderBy('date', 'desc')
       ), (myComments) => {
 
-        // Limpa a lista de manuais para carregar novamente.
+        // Limpa a lista de comentários para carregar novamente.
         this.comments = [];
 
         // Loop que itera cada faq obtida
@@ -88,82 +91,105 @@ export class ViewPage implements OnInit {
       this.route.navigate(['/usuarios']);
     }
 
-    // Verifica se tem usuario logado e obtém dados deste
-    onAuthStateChanged(this.auth, user => {
-      if (user) {
-        this.userData = user;
-      }
-    });
-
   }
 
-  // Salva comentários no banco de dados
-  async sendComment() {
+  // Função que exibe caixa de alerta
+  async presentAlert(alertHeader, alertMessage) {
+    const alert = await this.alertController.create({
+      header: alertHeader,
+      message: alertMessage,
+      buttons: [{
+        text: 'OK',
+        handler: () => {
 
-    /**
-     * Sanitiza comentário, se necessário
-     * Retirado do 'MyDocsApp' original:
-     *     https://github.com/Luferat/MyDocsApp/blob/20220119_01/global.js
-     */
-    this.comment = this.comment.replace(/<[^>]*>?/gm, '');
-    this.comment = this.comment.replace(/\n/g, '<br>').trim();
-    this.comment = this.comment.trim();
+          // Limpar campos do formulário
+          this.commentForm.markAsPristine();
 
-    // Se existe comentário...
-    if (this.comment !== '') {
+          // Preenche campos 'name' e 'email' com os valores atuais
+          this.commentForm.reset({
+            name: this.commentForm.value.name,
+            email: this.commentForm.value.email
+          });
 
-      /**
-       * Data de hoje, formatada.
-       * Retirado do 'MyDocsApp' original:
-       *     https://github.com/Luferat/MyDocsApp/blob/20220119_01/global.js
-       */
-      const yourDate = new Date();
-      const now = yourDate.toISOString().replace('T', ' ').split('.')[0];
+          return true;
 
-      // Formata dados para salvar no database
-      const commentData = {
-        name: this.userData.displayName, // Nome do comentarista
-        email: this.userData.email, // E-mail do comentarista
-        photo: this.userData.photoURL, // Foto do comentarista
-        uid: this.userData.uid, // ID do comentarista
-        date: now, // Data atual (UTC)
-        article: this.id, // ID do artigo que esta sendo comentado
-        comment: this.comment, // Comentário
-        status: 'on' // Status do comentário
-      };
+        }
+      }]
+    });
+    await alert.present();
+  }
 
-      // Tenta armazenar o comentário em um novo documento da coleção 'comment'
-      try {
-        const docRef = await addDoc(collection(this.afs, 'comment'), commentData);
+  // Função que cria o formulário
+  createForm() {
+    this.commentForm = this.fb.group({
+      name: ['',     // Valor inicial do campo
+        [
+          Validators.required,    // Campo obrigatório
+          Validators.minLength(3) // Pelo menos 3 caracteres
+        ]
+      ],
+      email: ['',    // Valor inicial do campo
+        [
+          Validators.required, // Campo obrigatório
+          Validators.email     // Deve ser um endereço de e-mail
+        ]
+      ],
+      comment: ['', // Valor inicial do campo
+        [
+          Validators.required,      // Campo obrigatório
+          Validators.minLength(5)   // Pelo menos 5 caracteres
+        ]
+      ]
+    });
+  }
 
-        // Se deu certo, exibe alerta para o usuário
-        this.presentAlert();
 
-        // Limpa o campo para um novo comentário
-        this.comment = '';
+  // Processa envio do formulário
+  async submitForm() {
 
-        // Se de errado...
-      } catch (e) {
+    this.commentSubmited = true;
 
-        // Exibe mensagem de erro no console.
-        console.error('Erro ao adicionar documento: ', e);
-      }
+    // Se o formulário tem erros ao enviar...
+    if (this.commentForm.invalid) {
 
+      // Exibe caixa de alerta
+      this.presentAlert(
+        'Ooooops!',
+        'Preencha todos os campos antes de enviar seus comentários...'
+      );
+
+      // Se formulário está ok...
     } else {
 
-      // Se não existe comentário, sai sem fazer nada.
-      return false;
+      this.commentData = this.commentForm.value;
+      this.commentData.date = this.nowDatetime();
+      this.commentData.status = 'on';
+      this.commentData.article = this.id;
+
+      await addDoc(collection(this.afs, 'comment'), this.commentData)
+        .then(() => {
+          const firstName = this.commentForm.value.name.split(' ')[0];
+          this.presentAlert(
+            `Olá ${firstName}!`,
+            'Seu comentário foi enviado com sucesso.<br><br>Obrigado...'
+          );
+        })
+        .catch(() => {
+          this.presentAlert(
+            'Ooooops!',
+            'Ocorreu um erro ao enviar seu comentário.<br><br>Por favor, tente mais tarde...'
+          );
+        });
     }
   }
 
-  // Caixa de alerta --> https://ionicframework.com/docs/api/alert
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: 'Oba!',
-      message: 'Seu comentário foi enviado com sucesso.',
-      buttons: ['Ok']
-    });
-    await alert.present();
+  // Função que gera a data atual no formato 'YYYY-MM-DD HH:II:SS'
+  nowDatetime() {
+    let yourDate = new Date();
+    yourDate = new Date(yourDate.getTime() - (yourDate.getTimezoneOffset() * 60 * 1000));
+    const dateParts = yourDate.toISOString().split('T');
+    const timeParts = dateParts[1].split('.')[0];
+    return dateParts[0] + ' ' + timeParts;
   }
 
 }

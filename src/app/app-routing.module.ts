@@ -1,15 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-// Importa dependências do AngularFire AuthGuard
-import { AuthGuard, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
-
-// Redireciona usuário não logado para a página de login
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['usuario/login']);
-
-// Redireciona usuário já logado para a página de perfil
-const redirectLoggedInToItems = () => redirectLoggedInTo(['usuario/perfil']);
-
 const routes: Routes = [
   {
     path: '',
@@ -69,33 +60,6 @@ const routes: Routes = [
   {
     path: 'view/:id',
     loadChildren: () => import('./page/view/view.module').then(m => m.ViewPageModule)
-  },
-  {
-    /**
-     * Essa rota é acessível somente se não estiver logado.
-     * Se estiver logado, redireciona para 'usuario/perfil'.
-     */
-    path: 'usuario/login',
-    loadChildren: () => import('./user/login/login.module').then(m => m.LoginPageModule),
-    canActivate: [AuthGuard], data: { authGuardPipe: redirectLoggedInToItems }
-  },
-  {
-    /**
-     * Essa rota é acessível somente se estiver logado.
-     * Se não estiver logado, redireciona para 'usuario/login'.
-     */
-    path: 'usuario/logout',
-    loadChildren: () => import('./user/logout/logout.module').then(m => m.LogoutPageModule),
-    canActivate: [AuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin }
-  },
-  {
-    /**
-     * Essa rota é acessível somente se estiver logado.
-     * Se não estiver logado, redireciona para 'usuario/login'.
-     */
-    path: 'usuario/perfil',
-    loadChildren: () => import('./user/profile/profile.module').then(m => m.ProfilePageModule),
-    canActivate: [AuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
   {
     /**
