@@ -8,6 +8,8 @@ import { initializeApp } from 'firebase/app';                          // Fireba
 import { addDoc, collection, getFirestore } from 'firebase/firestore'; // Firestore
 import { environment } from 'src/environments/environment';            // Configurações do app
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { Firestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-contacts',
@@ -23,13 +25,7 @@ export class ContactsPage implements OnInit {
   contactData: any;
 
   // Armazena metadados do usuário logado
-  user = {};
-
-  // Conexão com Firebase. Observe o uso da chave de 'environment'
-  app = initializeApp(environment.firebase);
-
-  // Conexão com Firestore
-  db = getFirestore();
+  user: any;
 
   constructor(
 
@@ -37,7 +33,8 @@ export class ContactsPage implements OnInit {
     private fb: FormBuilder,                  // Objeto do formulário
     private alertController: AlertController, // Objeto da caixa de alerta
     private router: Router,                    // Objeto que faz redirecionamento de rota
-    private auth: AngularFireAuth
+    private auth: Auth,
+    private afs: Firestore,
   ) { }
 
   ngOnInit() {
@@ -45,12 +42,9 @@ export class ContactsPage implements OnInit {
     // Cria formulário
     this.createForm();
 
-    // Testa se tem usuário logado
-    this.auth.authState.subscribe((user) => {
-
-      // Se tem alguém logado
+    // Verifica se tem usuario logado e obtém dados deste
+    onAuthStateChanged(this.auth, user => {
       if (user) {
-
         // Monta metadados do usuário
         this.user = {
           name: user.displayName,
@@ -75,6 +69,7 @@ export class ContactsPage implements OnInit {
         };
       }
     });
+
   }
 
   // Função que cria o formulário
@@ -134,7 +129,7 @@ export class ContactsPage implements OnInit {
       // console.log(this.contactData);
 
       // Armazena documento na coleção 'contact' do Firestore
-      await addDoc(collection(this.db, 'contact'), this.contactData)
+      await addDoc(collection(this.afs, 'contact'), this.contactData)
 
         // Se deu certo...
         .then(() => {
@@ -164,7 +159,7 @@ export class ContactsPage implements OnInit {
   }
 
   // Função que exibe caixa de alerta
-  async presentAlert(alertHeader: string, alertMessage: string, alertRedirect: boolean) {
+  async presentAlert(alertHeader, alertMessage, alertRedirect) {
     const alert = await this.alertController.create({
       header: alertHeader,
       message: alertMessage,
