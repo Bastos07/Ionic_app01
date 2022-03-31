@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 // Importa dependências
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { Auth } from '@angular/fire/auth';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { Auth, signInWithRedirect } from '@angular/fire/auth';
+import { GoogleAuthProvider } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -26,38 +26,7 @@ export class LoginPage implements OnInit {
   login() {
 
     // Faz a autenticação do usuário pelo provedor
-    signInWithPopup(this.auth, new GoogleAuthProvider())
+    signInWithRedirect(this.auth, new GoogleAuthProvider());
 
-      // Se der certo...
-      .then(
-
-        // Obtém os dados do usuário
-        (user) => {
-
-          // "Chama" a caixa de alerta
-          this.presentAlert(user.user.displayName);
-        }
-      );
   }
-
-  // Exibe uma caixa de alerta ao logar-se
-  // Referências: https://ionicframework.com/docs/api/alert
-  async presentAlert(userName) {
-    const alert = await this.alertController.create({
-      header: `Olá ${userName}!`,
-      message: 'Você já pode acessar nosso conteúdo exclusivo...',
-      buttons: [
-        {
-          text: 'Ok',
-          handler: () => {
-
-            // Quando clicar em [Ok] na caixa, vai para a página inicial
-            this.route.navigate(['/inicio']);
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
 }
