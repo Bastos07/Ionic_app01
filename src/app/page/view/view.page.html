@@ -37,7 +37,7 @@
         <ion-label position="floating">Nome:</ion-label>
         <ion-input type="text" formControlName="name" required></ion-input>
 
-        <ion-text color="danger" *ngIf="commentSubmited && commentForm.controls.name.errors">
+        <ion-text color="danger" *ngIf="commentForm.controls.name.touched && commentForm.controls.name.errors">
           <small *ngIf="commentForm.controls.name.errors?.required">Preencha este campo.</small>
           <small *ngIf="commentForm.controls.name.errors?.minlength">Pelo menos 3 caracteres.</small>
         </ion-text>
@@ -56,7 +56,7 @@
       </ion-item>
 
       <ion-item>
-        <ion-label position="floating">Mensagem:</ion-label>
+        <ion-label position="floating">Comentário:</ion-label>
         <ion-textarea formControlName="comment" required autoGrow></ion-textarea>
 
         <ion-text color="danger" *ngIf="commentSubmited && commentForm.controls.name.errors">

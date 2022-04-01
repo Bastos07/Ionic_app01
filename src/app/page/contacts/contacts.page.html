@@ -26,9 +26,9 @@
         <ion-label position="floating">Nome:</ion-label>
         <ion-input type="text" formControlName="name" required></ion-input>
 
-        <ion-text color="danger" *ngIf="submited && contactForm.controls.name.errors">
-          <small *ngIf="contactForm.controls.name.errors?.required">Preencha este campo.</small>
-          <small *ngIf="contactForm.controls.name.errors?.minlength">Pelo menos 3 caracteres.</small>
+        <ion-text color="danger" *ngIf="contactForm.controls.name.touched && contactForm.controls.name.errors">
+          <span *ngIf="contactForm.controls.name.errors?.required">Preencha este campo.</span>
+          <span *ngIf="contactForm.controls.name.errors?.minlength">Pelo menos 3 caracteres.</span>
         </ion-text>
 
       </ion-item>
@@ -37,9 +37,9 @@
         <ion-label position="floating">E-mail:</ion-label>
         <ion-input type="email" formControlName="email" required></ion-input>
 
-        <ion-text color="danger" *ngIf="submited && contactForm.controls.email.errors">
-          <small *ngIf="contactForm.controls.email.errors?.required">Preencha este campo.</small>
-          <small *ngIf="contactForm.controls.email.errors?.email">Deve ser um e-mail.</small>
+        <ion-text color="danger" *ngIf="contactForm.controls.email.touched && contactForm.controls.email.errors">
+          <span *ngIf="contactForm.controls.email.errors?.required">Preencha este campo.</span>
+          <span *ngIf="contactForm.controls.email.errors?.email">Deve ser um e-mail.</span>
         </ion-text>
 
       </ion-item>
@@ -48,9 +48,9 @@
         <ion-label position="floating">Assunto:</ion-label>
         <ion-input type="subject" formControlName="subject" required></ion-input>
 
-        <ion-text color="danger" *ngIf="submited && contactForm.controls.subject.errors">
-          <small *ngIf="contactForm.controls.subject.errors?.required">Preencha este campo.</small>
-          <small *ngIf="contactForm.controls.subject.errors?.minlength">Pelo menos 5 caracteres.</small>
+        <ion-text color="danger" *ngIf="contactForm.controls.subject.touched && contactForm.controls.subject.errors">
+          <span *ngIf="contactForm.controls.subject.errors?.required">Preencha este campo.</span>
+          <span *ngIf="contactForm.controls.subject.errors?.minlength">Pelo menos 5 caracteres.</span>
         </ion-text>
 
       </ion-item>
@@ -59,9 +59,9 @@
         <ion-label position="floating">Mensagem:</ion-label>
         <ion-textarea formControlName="message" required autoGrow></ion-textarea>
 
-        <ion-text color="danger" *ngIf="submited && contactForm.controls.message.errors">
-          <small *ngIf="contactForm.controls.message.errors?.required">Preencha este campo.</small>
-          <small *ngIf="contactForm.controls.message.errors?.minlength">Pelo menos 5 caracteres.</small>
+        <ion-text color="danger" *ngIf="contactForm.controls.message.touched && contactForm.controls.message.errors">
+          <span *ngIf="contactForm.controls.message.errors?.required">Preencha este campo.</span>
+          <span *ngIf="contactForm.controls.message.errors?.minlength">Pelo menos 5 caracteres.</span>
         </ion-text>
 
       </ion-item>
@@ -73,5 +73,48 @@
     </ion-list>
 
   </form>
+  &nbsp;
+  <h3>+ Contatos</h3>
+  <ion-text>Se preferir, acesse nossas redes sociais e outras formas de contato:</ion-text>
+
+  <ion-grid class="ion-margin-top">
+
+    <ion-row>
+
+      <ion-col>
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        <span>Github</span>
+      </ion-col>
+
+      <ion-col>
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        <span>Facebook</span>
+      </ion-col>
+
+      <ion-col>
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        <span>Youtube</span>
+      </ion-col>
+
+    </ion-row>
+    <ion-row>
+
+      <ion-col>
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        <span>WhatsApp</span>
+      </ion-col>
+
+      <ion-col>
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        <span>Telefone</span>
+      </ion-col>
+
+      <ion-col>
+        <ion-icon ios="people-outline" md="people-sharp"></ion-icon>
+        <span>E-mail</span>
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

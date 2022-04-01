@@ -1,4 +1,31 @@
-div ion-icon
- {
-   font-size: 8rem;
- }
+div ion-icon {
+  font-size: 8rem;
+}
+
+ion-grid ion-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.8rem;
+  background: linear-gradient(rgb(90, 148, 196), rgb(25, 60, 88));
+  color: yellow;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  width: 33%;
+  border-radius: 0.3rem;
+}
+
+ion-grid ion-col:first-child {
+  margin-left: 0;
+}
+
+ion-grid ion-col:last-child {
+  margin-right: 0;
+}
+
+ion-grid ion-col ion-icon {
+  font-size: 3rem;
+  margin-bottom: 0.3rem;
+}
