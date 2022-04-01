@@ -24,8 +24,6 @@ export class ContactsPage implements OnInit {
   // Armazena metadados do usuário logado
   user: any;
 
-  submited = false;
-
   constructor(
 
     // Injeta dependências
@@ -75,8 +73,6 @@ export class ContactsPage implements OnInit {
 
   // Processa envio do formulário
   async submitForm() {
-
-    this.submited = true;
 
     // Se o formulário tem erros ao enviar...
     if (this.contactForm.invalid) {
@@ -162,5 +158,19 @@ export class ContactsPage implements OnInit {
     await alert.present();
   }
 
+
+  goSocial(social) {
+
+    let url = '';
+
+    switch (social) {
+      case 'github':
+        url = 'https://github.com/Luferat';
+        break;
+
+
+    }
+
+  }
 
 }

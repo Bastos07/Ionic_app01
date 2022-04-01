@@ -25,7 +25,6 @@ export class ViewPage implements OnInit {
   commentData: any;
   comments: Array<any> = [];
   commentForm: FormGroup;
-  commentSubmited = false;
 
   constructor(
 
@@ -148,8 +147,6 @@ export class ViewPage implements OnInit {
 
   // Processa envio do formulário
   async submitForm() {
-
-    this.commentSubmited = true;
 
     // Se o formulário tem erros ao enviar...
     if (this.commentForm.invalid) {
