@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { addDoc, collection, doc, Firestore, getDoc, onSnapshot, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
 import { AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DateService } from 'src/app/services/date.service';
 
 @Component({
   selector: 'app-view',
@@ -33,7 +34,8 @@ export class ViewPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private route: Router,
     public alertController: AlertController,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private date: DateService
   ) { }
 
   // 'ngOnInit()' deve ser 'async' por causa do 'await' usado logo abaixo!
@@ -162,7 +164,7 @@ export class ViewPage implements OnInit {
     } else {
 
       this.commentData = this.commentForm.value;
-      this.commentData.date = this.nowDatetime();
+      this.commentData.date = this.date.brNow();
       this.commentData.status = 'on';
       this.commentData.article = this.id;
 
@@ -181,15 +183,6 @@ export class ViewPage implements OnInit {
           );
         });
     }
-  }
-
-  // Função que gera a data atual no formato 'YYYY-MM-DD HH:II:SS'
-  nowDatetime() {
-    let yourDate = new Date();
-    yourDate = new Date(yourDate.getTime() - (yourDate.getTimezoneOffset() * 60 * 1000));
-    const dateParts = yourDate.toISOString().split('T');
-    const timeParts = dateParts[1].split('.')[0];
-    return dateParts[0] + ' ' + timeParts;
   }
 
 }

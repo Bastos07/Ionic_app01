@@ -6,6 +6,7 @@ import { Router } from '@angular/router';                              // Roteam
 import { AlertController } from '@ionic/angular';                      // Caixa de alerta do Ionic
 import { addDoc, collection } from 'firebase/firestore'; // Firestore
 import { Firestore } from '@angular/fire/firestore';
+import { DateService } from '../../services/date.service';
 
 @Component({
   selector: 'app-contacts',
@@ -32,6 +33,7 @@ export class ContactsPage implements OnInit {
     private alertController: AlertController, // Objeto da caixa de alerta
     private router: Router,                    // Objeto que faz redirecionamento de rota
     private afs: Firestore,
+    private date: DateService
   ) { }
 
   ngOnInit() {
@@ -91,7 +93,7 @@ export class ContactsPage implements OnInit {
 
       // Formata os campos do documento do Firebase Firestore
       this.contactData = this.contactForm.value;  // Dados do formulário
-      this.contactData.date = this.nowDatetime(); // Data atual já formatada
+      this.contactData.date = this.date.brNow(); // Data atual já formatada
       this.contactData.status = 'recebido';       // Status do contato
 
       // Armazena documento na coleção 'contact' do Firestore
@@ -160,12 +162,5 @@ export class ContactsPage implements OnInit {
     await alert.present();
   }
 
-  // Função que gera a data atual no formato 'YYYY-MM-DD HH:II:SS'
-  nowDatetime() {
-    let yourDate = new Date(); // Obtém a data atual
-    yourDate = new Date(yourDate.getTime() - (yourDate.getTimezoneOffset() * 60 * 1000)); // Ajusta o 'timezone'
-    const dateParts = yourDate.toISOString().split('T'); // Extrai partes da data
-    const timeParts = dateParts[1].split('.')[0]; // Remove timezone da hora
-    return dateParts[0] + ' ' + timeParts; // Formata a data
-  }
+
 }
